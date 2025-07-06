@@ -1,0 +1,40 @@
+{
+  "name": "webpack-template",
+  "version": "1.0.0",
+  "description": "Template to speed up future projects' setups.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack serve --open --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js",
+    "deploy": "git subtree push --prefix dist origin gh-pages",
+    "format": "echo 'Formatting src only...' && prettier \"src/**/*\" --write",
+    "format:check": "echo 'Checking src only...' && prettier \"src/**/*\" --check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MichalRydzewski/webpack-template.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MichalRydzewski/webpack-template/issues"
+  },
+  "homepage": "https://github.com/MichalRydzewski/webpack-template#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.25.0",
+    "css-loader": "^7.1.2",
+    "eslint": "^9.25.0",
+    "eslint-config-prettier": "^10.1.2",
+    "globals": "^16.0.0",
+    "html-loader": "^5.1.0",
+    "html-webpack-plugin": "^5.6.3",
+    "prettier": "3.5.3",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.99.6",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.1",
+    "webpack-merge": "^6.0.1"
+  }
+}
