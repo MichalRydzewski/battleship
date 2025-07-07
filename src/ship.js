@@ -2,12 +2,15 @@ export class Ship {
   constructor(length) {
     this.length = length
     this.timesHit = 0
-    this.isSunk = false
+    this.sunken = false
   }
 
-  hit() {}
+  hit() {
+    this.timesHit++
+  }
 
-  isSunk() {}
+  isSunk() {
+    if (this.timesHit >= this.length) return (this.sunken = true)
+    else return (this.sunken = false)
+  }
 }
-
-// ONLY TEST PUBLIC INTERFACE (methods/properties that are used outside of class)
