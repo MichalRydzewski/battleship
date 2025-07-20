@@ -1,33 +1,42 @@
+import { Ship } from "./ship.js"
+
 export class Gameboard {
   constructor() {
     this.board = createBoard()
+    this.shipCoordinates = []
+    this.missedShots = []
   }
 
   placeShip(coordinates, slope, ship) {
     const shipCoords = calculateCoordinates(coordinates, slope, ship.length)
     for (let i = 0; i < shipCoords.length; i++) {
       const thisCoord = shipCoords[i]
-      this.board[thisCoord[0]][thisCoord[1]] = "test"
+      this.board[thisCoord[0]][thisCoord[1]] = ship
     }
-    return shipCoords
+    return this.board
   }
 
-  receiveAttack() {
-    // takes a pair of coords, determines whether or not the attack hit a ship
-    // and then sends the hit function to correct ship/records coords of missed shot
+  receiveAttack(coords) {
+    const X = coords[0]
+    const Y = coords[1]
+    const attackCoords = this.board[X][Y]
+
+    if (attackCoords instanceof Ship) {
+      attackCoords.hit()
+      return attackCoords
+    } else {
+      this.missedShots.push(attackCoords)
+      return "Missed shots: " + JSON.stringify(this.missedShots)
+    }
   }
-
-  // gameboards should keep track of missed shots so they can display them properly
-
-  // gameboards should be able to report whether or not all their ships have been sunk
 }
 
 function createBoard() {
   let board = []
-  for (let i = 0; i < 10; i++) {
-    board[i] = []
-    for (let j = 0; j < 10; j++) {
-      board[i][j] = [j, i]
+  for (let x = 0; x < 10; x++) {
+    board[x] = []
+    for (let y = 0; y < 10; y++) {
+      board[x][y] = [x, y]
     }
   }
   return board
@@ -45,7 +54,7 @@ function calculateCoordinates(coordinates, slope, length) {
     } else if (slope === "-") {
       const newCoords = [X + i, Y]
       shipCoords.push(newCoords)
-    } else throw "Wrong slope"
+    } else throw "Not a valid slope"
   }
   return shipCoords
 }
