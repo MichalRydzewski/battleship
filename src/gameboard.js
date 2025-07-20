@@ -3,12 +3,14 @@ import { Ship } from "./ship.js"
 export class Gameboard {
   constructor() {
     this.board = createBoard()
-    this.shipCoordinates = []
+    this.shipsCoordinates = []
     this.missedShots = []
+    this.shotsOnTarget = []
   }
 
   placeShip(coordinates, slope, ship) {
     const shipCoords = calculateCoordinates(coordinates, slope, ship.length)
+    this.shipsCoordinates.push(shipCoords)
     for (let i = 0; i < shipCoords.length; i++) {
       const thisCoord = shipCoords[i]
       this.board[thisCoord[0]][thisCoord[1]] = ship
@@ -20,14 +22,20 @@ export class Gameboard {
     const X = coords[0]
     const Y = coords[1]
     const attackCoords = this.board[X][Y]
-
+    
     if (attackCoords instanceof Ship) {
       attackCoords.hit()
+      this.shotsOnTarget.push(coords)
       return attackCoords
     } else {
       this.missedShots.push(attackCoords)
       return "Missed shots: " + JSON.stringify(this.missedShots)
     }
+  }
+  
+  areAllSunk() {
+    if (this.shipsCoordinates.flat(1).length === this.shotsOnTarget.length) return true
+    else return false
   }
 }
 
