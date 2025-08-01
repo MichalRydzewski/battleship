@@ -4,21 +4,6 @@
   padding: 0;
 }
 
-body {
-  font-family:
-    "Roboto",
-    sans-serif,
-    "Helvetica Neue",
-    "Open Sans",
-    Ubuntu,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Oxygen,
-    Cantarell;
-}
-
 @font-face {
   font-family: "Roboto";
   font-weight: 400;
@@ -56,24 +41,65 @@ body {
     url("assets/fonts/roboto-bold-webfont.woff") format("woff");
 }
 
+:root {
+  --light-blue: rgb(233, 249, 249);
+}
+
 body {
-  background-color:gainsboro;
+  font-family:
+    "Roboto",
+    sans-serif,
+    "Helvetica Neue",
+    "Open Sans",
+    Ubuntu,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Oxygen,
+    Cantarell;
+  background-image: url(./assets/ship.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+h1 {
+  margin-left: 2rem;
+  margin-top: 1rem;
+  font-size: 2.4rem;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.a-author:hover {
+  color: white;
+}
+
+.photo-author {
+  margin-top: 1rem;
+  margin-right: 1rem;
+  font-size: 1.3rem;
 }
 
 .gameboards {
   display: flex;
-  margin-top: 2rem;
+  margin-top: 5rem;
   justify-content: center;
 }
 
 .board {
   transform: rotate(-90deg);
-  margin: 0 50px;
-  width: 700px;
-  height: 700px;
-  background-color: white;
+  margin: 1rem 50px;
+  width: 600px;
+  height: 600px;
   display: grid;
-  grid: repeat(10, 70px) / auto-flow;
+  grid: repeat(10, 60px) / repeat(10, 60px);
+  outline: var(--light-blue) 1px solid;
 }
 
 .board-flex {
@@ -84,13 +110,54 @@ body {
 }
 
 .board-text {
-  font-size: 35px;
+  font-size: 1.5rem;
+  color: var(--light-blue);
   padding-bottom: 5px;
 }
 
 .cell {
-  background-color: aquamarine;
-  border: solid 1px black;
-  /* width: 10px; */
-  /* height: 10px; */
+  background-color: rgb(233, 249, 249, 0.5);
+  border: 1px solid var(--light-blue);
+}
+
+.cell:hover {
+  background-color: rgb(128, 128, 128,0.6);
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  border-top: var(--light-blue) 1px solid;
+  background-color: rgb(255, 255, 255, 0.4);
+  transition: all 1s 0.2s;
+  width: 100%;
+  height: 40px;
+  font-size: 20px;
+  padding-top: 7px;
+}
+
+.github-svg {
+  width: 25px;
+  height: 25px;
+}
+
+.footer-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+a,
+a:visited {
+  text-decoration: none;
+  color: black;
+}
+
+footer:hover {
+  filter: invert(1);
+}
+
+.ship {
+  background-color: rgb(220, 220, 220, 0.9);
 }
