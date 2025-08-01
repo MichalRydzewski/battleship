@@ -1,10 +1,18 @@
-import { calculateCoordinates } from "./gameboard.js"
-import { Ship } from "./ship.js"
+import { calculateCoordinates, Gameboard } from "./gameboard.js"
+import { Ship } from "./gameboard.js"
 import { randomizeCoords, randomizeSlope } from "./helper-functions.js"
 
 export const validCoordsArr = []
 
-// const gameboard = new Gameboard()
+export function setUpShips() {
+  for (let i = 0; i < 10; i++) {
+    let shipCoords = setShip(1)
+    if (i >= 4 && i < 7) shipCoords = setShip(2)
+    if (i >= 7 && i < 9) shipCoords = setShip(3)
+    if (i === 9) shipCoords = setShip(4)
+    shipCoords.forEach((coord) => validCoordsArr.push(coord))
+  }
+}
 
 function setShip(shipLength) {
   const newShipCoords = calculateCoordinates(
@@ -12,44 +20,49 @@ function setShip(shipLength) {
     randomizeSlope(),
     new Ship(shipLength).length,
   )
-  const coordsFlat = newShipCoords.flat()
 
-  if (
-    !coordsFlat.some((el) => el > 9 || el < 0) &&
-    validShipCoords(newShipCoords)
-  )
+  if (isInBounds(newShipCoords) && validShipCoords(newShipCoords))
     return newShipCoords
   else return setShip(shipLength)
 }
 
 function validShipCoords(arr) {
-  if (!arr.every((coords) => !validCoordsArr.includes(JSON.stringify(coords)))) {
-    return false
-  }
   const xArr = [0, 0, 1, 1, 1, -1, -1, -1]
   const yArr = [1, -1, 0, 1, -1, 0, 1, -1]
-  return !neighbourCoords(arr, xArr, yArr).includes(arr) ? true : false
+
+  const neighbours = neighbourCoords(arr, xArr, yArr)
+
+  if (arr.some((coords) => includesCoord(validCoordsArr, coords))) return false
+  if (neighbours.some((coords) => includesCoord(validCoordsArr, coords))) return false
+
+  return true
 }
 
 function neighbourCoords(shipCoords, diffXarr, diffYarr) {
   const calculatedCoords = []
-  shipCoords.forEach(coord => {
+
+  shipCoords.forEach(([x,y]) => {
     for (let i = 0; i < 8; i++) {
-      calculatedCoords.push([coord[0] + diffXarr[i], coord[1] + diffYarr[i]])
+      const nx = x + diffXarr[i]
+      const ny = y + diffYarr[i]
+      if (!includesCoord(shipCoords, [nx, ny])) calculatedCoords.push([nx, ny])
     }
   })
-  return [...new Set(calculatedCoords)]
+
+  return calculatedCoords
 }
 
-function setUpShips() {
-  for (let i = 0; i < 10; i++) {
-    let shipCoords = setShip(1)
-    if (i >= 4 && i < 7) shipCoords = setShip(2)
-    if (i >= 7 && i < 9) shipCoords = setShip(3)
-    if (i === 9) shipCoords = setShip(4)
-    shipCoords.forEach((coord) => validCoordsArr.push(JSON.stringify(coord)))
+function includesCoord(arr, coord) {
+  return arr.some(([x, y]) => x === coord[0] && y === coord[1])
+}
+
+function isInBounds(arr) {
+  return arr.every(([x, y]) => x >= 0 && x <= 9 && y >= 0 && y <= 9)
+}
+
+export class Player {
+  constructor(player) {
+    this.playerType = player
+    this.gameboard = new Gameboard()
   }
 }
-
-setUpShips()
-console.log(validCoordsArr);
