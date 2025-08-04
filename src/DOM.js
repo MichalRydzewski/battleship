@@ -1,15 +1,18 @@
-import { setUpShips, validCoordsArr } from "./game.js"
+import { human, computer } from "./game.js"
+
+const board1 = document.querySelector(".board-1")
+const board2 = document.querySelector(".board-2")
 
 export function loadDOM() {
-  const board1 = document.querySelector(".board-1")
-  loadBoard(board1)
-  const board2 = document.querySelector(".board-2")
-  loadBoard(board2)
+  renderShips(board1, human)
+  renderShips(board2, computer)
+}
 
-  setUpShips()
-  const sortedShipsCoordsArr = validCoordsArr.sort((a, b) => a[0] - b[0])
-  sortedShipsCoordsArr.forEach(coord => {
-    board1.querySelector(`.cell-${coord[0]}-${coord[1]}`).classList.add("ship")
+function renderShips(board, player) {
+  loadBoard(board)
+  player.setUpShips()
+  player.validCoordsArr.forEach(([x, y]) => {
+    board.querySelector(`.cell-${x}-${y}`)?.classList.add("ship")
   })
 }
 

@@ -1,41 +1,82 @@
-import { Ship } from "./ship.js"
+import { randomizeCoords, randomizeSlope } from "./helper-functions.js"
+
+export class Ship {
+  constructor(length) {
+    this.length = length
+    this.timesHit = 0
+    this.sunken = false
+  }
+
+  hit() {
+    this.timesHit++
+    this.sunken = this.timesHit >= this.length
+  }
+}
 
 export class Gameboard {
   constructor() {
     this.board = createBoard()
     this.shipsCoordinates = []
+    this.validCoordsArr = []
     this.missedShots = []
     this.shotsOnTarget = []
   }
 
-  placeShip(coordinates, slope, ship) {
-    const shipCoords = calculateCoordinates(coordinates, slope, ship.length)
-    this.shipsCoordinates.push(shipCoords)
-    for (let i = 0; i < shipCoords.length; i++) {
-      const thisCoord = shipCoords[i]
-      this.board[thisCoord[0]][thisCoord[1]] = ship
-    }
-    return this.board
+  placeShip(shipLength) {
+    const newShipCoords = calculateCoordinates(
+      randomizeCoords(),
+      randomizeSlope(),
+      shipLength,
+    )
+    if (isInBounds(newShipCoords) && this.validShipCoords(newShipCoords)) {
+      this.shipsCoordinates.push(newShipCoords)
+      this.validCoordsArr.push(...newShipCoords)
+      const ship = new Ship(shipLength)
+      newShipCoords.forEach(([X, Y]) => (this.board[X][Y] = ship))
+      return newShipCoords
+    } else return this.placeShip(shipLength)
   }
 
-  receiveAttack(coords) {
-    const X = coords[0]
-    const Y = coords[1]
-    const attackCoords = this.board[X][Y]
-    
-    if (attackCoords instanceof Ship) {
-      attackCoords.hit()
-      this.shotsOnTarget.push(coords)
-      return attackCoords
-    } else {
-      this.missedShots.push(attackCoords)
-      return "Missed shots: " + JSON.stringify(this.missedShots)
+  setUpShips() {
+    this.validCoordsArr = []
+    this.shipsCoordinates = []
+
+    for (let i = 0; i < 10; i++) {
+      let len = 1
+      if (i >= 4 && i < 7) len = 2
+      if (i >= 7 && i < 9) len = 3
+      if (i === 9) len = 4
+      this.placeShip(len)
     }
   }
-  
+
+  receiveAttack([X, Y]) {
+    const target = this.board[X][Y]
+
+    if (target instanceof Ship) {
+      target.hit()
+      this.shotsOnTarget.push([X, Y])
+      return target
+    } else {
+      this.missedShots.push([X, Y])
+      return "Miss"
+    }
+  }
+
+  validShipCoords(arr) {
+    const xArr = [0, 0, 1, 1, 1, -1, -1, -1]
+    const yArr = [1, -1, 0, 1, -1, 0, 1, -1]
+    const neighbours = neighbourCoords(arr, xArr, yArr)
+
+    if (arr.some((coords) => includesCoord(this.validCoordsArr, coords)))
+      return false
+    if (neighbours.some((coords) => includesCoord(this.validCoordsArr, coords)))
+      return false
+    return true
+  }
+
   areAllSunk() {
-    if (this.shipsCoordinates.flat(1).length === this.shotsOnTarget.length) return true
-    else return false
+    return this.shipsCoordinates.flat().length === this.shotsOnTarget.length
   }
 }
 
@@ -50,10 +91,8 @@ function createBoard() {
   return board
 }
 
-function calculateCoordinates(coordinates, slope, length) {
+function calculateCoordinates([X, Y], slope, length) {
   const shipCoords = []
-  const X = coordinates[0]
-  const Y = coordinates[1]
 
   for (let i = 0; i < length; i++) {
     if (slope === "|") {
@@ -65,4 +104,25 @@ function calculateCoordinates(coordinates, slope, length) {
     } else throw "Not a valid slope"
   }
   return shipCoords
+}
+
+function neighbourCoords(shipCoords, diffXarr, diffYarr) {
+  const calculatedCoords = []
+
+  shipCoords.forEach(([x, y]) => {
+    for (let i = 0; i < 8; i++) {
+      const nx = x + diffXarr[i]
+      const ny = y + diffYarr[i]
+      if (!includesCoord(shipCoords, [nx, ny])) calculatedCoords.push([nx, ny])
+    }
+  })
+  return calculatedCoords
+}
+
+function includesCoord(arr, coord) {
+  return arr.some(([x, y]) => x === coord[0] && y === coord[1])
+}
+
+function isInBounds(arr) {
+  return arr.every(([x, y]) => x >= 0 && x <= 9 && y >= 0 && y <= 9)
 }
