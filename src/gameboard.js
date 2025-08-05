@@ -14,7 +14,7 @@ export class Ship {
 }
 
 export class Gameboard {
-  constructor() {
+  constructor() { 
     this.board = createBoard()
     this.shipsCoordinates = []
     this.validCoordsArr = []
@@ -34,19 +34,32 @@ export class Gameboard {
       const ship = new Ship(shipLength)
       newShipCoords.forEach(([X, Y]) => (this.board[X][Y] = ship))
       return newShipCoords
-    } else return this.placeShip(shipLength)
+    } else {
+      if (!this._attempts) this._attempts = 0
+      this._attempts++
+      if (this._attempts > 100) throw new Error("Too many attempts to place ship.")
+      return this.placeShip(shipLength)
+    }
   }
 
   setUpShips() {
-    this.validCoordsArr = []
-    this.shipsCoordinates = []
+    while (true) {
+      try {
+        this.validCoordsArr = []
+        this.shipsCoordinates = []
+        this._attempts = 0
 
-    for (let i = 0; i < 10; i++) {
-      let len = 1
-      if (i >= 4 && i < 7) len = 2
-      if (i >= 7 && i < 9) len = 3
-      if (i === 9) len = 4
-      this.placeShip(len)
+        for (let i = 0; i < 10; i++) {
+          let len = 1
+          if (i >= 4 && i < 7) len = 2
+          if (i >= 7 && i < 9) len = 3
+          if (i === 9) len = 4
+          this.placeShip(len)
+        }
+        break
+      } catch (e){
+        e 
+      }
     }
   }
 
