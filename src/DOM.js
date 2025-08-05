@@ -25,3 +25,16 @@ function loadBoard(board) {
     }
   }
 }
+
+board2.addEventListener("click", e => {
+  const cell = e.target
+  if (cell.matches(".ship")) {
+    cell.classList.add("shot")
+  } 
+  if (cell.matches(".cell") && !cell.matches(".ship") && !cell.matches(".missed")) {
+    cell.classList.add("missed")
+    const div = document.createElement("div")
+    div.classList.add("missed-shot")
+    cell.appendChild(div)
+  } 
+})
