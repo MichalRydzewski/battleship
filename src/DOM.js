@@ -11,9 +11,11 @@ export function loadDOM() {
 function renderShips(board, player) {
   loadBoard(board)
   player.setUpShips()
-  player.validCoordsArr.forEach(([x, y]) => {
-    board.querySelector(`.cell-${x}-${y}`)?.classList.add("ship")
-  })
+  if (board === board1) {
+    player.validCoordsArr.forEach(([x, y]) => {
+      board.querySelector(`.cell-${x}-${y}`)?.classList.add("ship")
+    })
+  }
 }
 
 function loadBoard(board) {
@@ -26,15 +28,28 @@ function loadBoard(board) {
   }
 }
 
-board2.addEventListener("click", e => {
-  const cell = e.target
-  if (cell.matches(".ship")) {
-    cell.classList.add("shot")
-  } 
-  if (cell.matches(".cell") && !cell.matches(".ship") && !cell.matches(".missed")) {
-    cell.classList.add("missed")
+board2.addEventListener("click", shoot)
+
+function shoot(e) {
+  const target = e.target
+  if (
+    !target.classList.contains("cell") ||
+    target.classList.contains("shot") ||
+    target.classList.contains("missed")
+  ) return
+
+  const cellClass = [...target.classList].find((cls) => cls.startsWith("cell-"))
+  if (!cellClass) return
+
+  const [x, y] = cellClass.split("-").slice(1).map(Number)
+
+  const isHit = computer.validCoordsArr.some(([dx, dy]) => dx === x && dy === y)
+  if (isHit) {
+    target.classList.add("shot")
+  } else {
+    target.classList.add("missed")
     const div = document.createElement("div")
     div.classList.add("missed-shot")
-    cell.appendChild(div)
-  } 
-})
+    target.appendChild(div)
+  }
+}
