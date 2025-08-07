@@ -104,7 +104,7 @@ function createBoard() {
   return board
 }
 
-function calculateCoordinates([X, Y], slope, length) {
+export function calculateCoordinates([X, Y], slope, length) {
   const shipCoords = []
 
   for (let i = 0; i < length; i++) {
@@ -119,13 +119,13 @@ function calculateCoordinates([X, Y], slope, length) {
   return shipCoords
 }
 
-function neighbourCoords(shipCoords, diffXarr, diffYarr) {
+export function neighbourCoords(shipCoords, dx, dy) {
   const calculatedCoords = []
 
   shipCoords.forEach(([x, y]) => {
     for (let i = 0; i < 8; i++) {
-      const nx = x + diffXarr[i]
-      const ny = y + diffYarr[i]
+      const nx = x + dx[i]
+      const ny = y + dy[i]
       if (!includesCoord(shipCoords, [nx, ny])) calculatedCoords.push([nx, ny])
     }
   })
@@ -136,6 +136,6 @@ function includesCoord(arr, coord) {
   return arr.some(([x, y]) => x === coord[0] && y === coord[1])
 }
 
-function isInBounds(arr) {
+export function isInBounds(arr) {
   return arr.every(([x, y]) => x >= 0 && x <= 9 && y >= 0 && y <= 9)
 }
