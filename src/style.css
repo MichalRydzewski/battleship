@@ -169,7 +169,7 @@ footer:hover {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: rgb(255,0,0,0.4);
+  background-color: rgb(255, 0, 0, 0.4);
 }
 
 .shot::before,
@@ -177,7 +177,7 @@ footer:hover {
   position: absolute;
   content: "";
   width: 100%;
-  height: 4px; 
+  height: 4px;
   background-color: black;
 }
 
@@ -199,5 +199,45 @@ footer:hover {
 }
 
 .missed {
-  background-color: rgb(128, 128, 128, 0.6)
+  background-color: rgb(128, 128, 128, 0.6);
+}
+
+.enemy-turn {
+}
+
+.you-win,
+.you-lose {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  background-color: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 4rem;
+  font-weight: bold;
+  z-index: 1000;
+  gap: 2rem;
+}
+
+.restart-btn {
+  margin-top: 2rem;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.restart-btn:hover {
+  background-color: #dddddd;
 }

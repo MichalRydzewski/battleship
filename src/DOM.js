@@ -46,10 +46,33 @@ function shoot(e) {
   const isHit = computer.validCoordsArr.some(([dx, dy]) => dx === x && dy === y)
   if (isHit) {
     target.classList.add("shot")
+    computer.receiveAttack([x,y])
+    console.log(computer.shotsOnTarget);
   } else {
     target.classList.add("missed")
     const div = document.createElement("div")
     div.classList.add("missed-shot")
     target.appendChild(div)
   }
+  if (computer.areAllSunk()) {
+    endScreen("win")
+    return
+  }
+  // enemyTurn()
+}
+
+function endScreen(endResult) {
+  const winScreen = document.createElement("div")
+  winScreen.classList.add(`you-${endResult}`)
+  winScreen.textContent = `YOU ${endResult.toUpperCase()}!`
+
+  const restartBtn = document.createElement("button")
+  restartBtn.textContent = "Play again"
+  restartBtn.classList.add("restart-btn")
+  restartBtn.addEventListener("click", () => {
+    location.reload() 
+  })
+
+  winScreen.appendChild(restartBtn)
+  document.body.appendChild(winScreen)
 }
