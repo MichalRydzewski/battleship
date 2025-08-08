@@ -52,7 +52,6 @@ function shoot(e) {
   if (isHit) {
     target.classList.add("shot")
     computer.receiveAttack([x, y])
-    console.log(computer.shotsOnTarget)
   } else {
     target.classList.add("missed")
     const div = document.createElement("div")
@@ -60,15 +59,15 @@ function shoot(e) {
     target.appendChild(div)
   }
 
-  isShipSunk(isHit, x, y)
+  isShipSunk(isHit, x, y, computer)
 
   if (computer.areAllSunk()) {
     endScreen("win")
     return
   }
 
-  // currTurn = "computer"
-  // setTimeout(enemyTurn, 600)
+  currTurn = "computer"
+  setTimeout(enemyTurn, 600)
 }
 
 function endScreen(endResult) {
@@ -87,15 +86,16 @@ function endScreen(endResult) {
   document.body.appendChild(winScreen)
 }
 
-function isShipSunk(isHit, x, y) {
-  if (isHit && computer.board[x][y].sunken) {
-    const sunkCoordinates = computer.shipsCoordinates.find((coords) =>
+function isShipSunk(isHit, x, y, player) {
+  if (isHit && player.board[x][y].sunken) {
+    const sunkCoordinates = player.shipsCoordinates.find((coords) =>
       coords.some(([dx, dy]) => dx === x && dy === y),
     )
 
     if (sunkCoordinates) {
+      const board = player === human ? board1 : board2
       sunkCoordinates.forEach(([dx, dy]) => {
-        const sunkCell = board2.querySelector(`.cell-${dx}-${dy}`)
+        const sunkCell = board.querySelector(`.cell-${dx}-${dy}`)
         sunkCell.classList.add("sunk")
       })
     }
@@ -103,6 +103,37 @@ function isShipSunk(isHit, x, y) {
 }
 
 function enemyTurn() {
-  alert("test")
-  currTurn = "player"
+  let x, y, shotCell
+  let isCellHit = true
+
+  while (isCellHit) {
+    x = Math.floor(Math.random() * 10)
+    y = Math.floor(Math.random() * 10)
+    
+    shotCell = board1.querySelector(`.cell-${x}-${y}`)
+    isCellHit = shotCell.classList.contains("shot") ||
+    shotCell.classList.contains("missed")
+  }
+  
+  shotCell = board1.querySelector(`.cell-${x}-${y}`)
+  const isHit = shotCell.classList.contains("ship")
+  human.receiveAttack([x,y])
+
+  if (isHit) {
+    shotCell.classList.add("shot")
+  } else {
+    shotCell.classList.add("missed")
+    const div = document.createElement("div")
+    div.classList.add("missed-shot")
+    shotCell.appendChild(div)
+  }
+
+  isShipSunk(isHit, x, y, human)
+
+  if (human.areAllSunk()) {
+    endScreen("lose")
+    return
+  }
+
+  currTurn = "human"
 }
