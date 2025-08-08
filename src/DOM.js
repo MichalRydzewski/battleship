@@ -3,6 +3,8 @@ import { human, computer } from "./game.js"
 const board1 = document.querySelector(".board-1")
 const board2 = document.querySelector(".board-2")
 
+let currTurn = "human"
+
 export function loadDOM() {
   renderShips(board1, human)
   renderShips(board2, computer)
@@ -31,12 +33,15 @@ function loadBoard(board) {
 board2.addEventListener("click", shoot)
 
 function shoot(e) {
+  if (currTurn !== "human") return
+
   const target = e.target
   if (
     !target.classList.contains("cell") ||
     target.classList.contains("shot") ||
     target.classList.contains("missed")
-  ) return
+  )
+    return
 
   const cellClass = [...target.classList].find((cls) => cls.startsWith("cell-"))
   if (!cellClass) return
@@ -46,19 +51,24 @@ function shoot(e) {
   const isHit = computer.validCoordsArr.some(([dx, dy]) => dx === x && dy === y)
   if (isHit) {
     target.classList.add("shot")
-    computer.receiveAttack([x,y])
-    console.log(computer.shotsOnTarget);
+    computer.receiveAttack([x, y])
+    console.log(computer.shotsOnTarget)
   } else {
     target.classList.add("missed")
     const div = document.createElement("div")
     div.classList.add("missed-shot")
     target.appendChild(div)
   }
+
+  isShipSunk(isHit, x, y)
+
   if (computer.areAllSunk()) {
     endScreen("win")
     return
   }
-  // enemyTurn()
+
+  // currTurn = "computer"
+  // setTimeout(enemyTurn, 600)
 }
 
 function endScreen(endResult) {
@@ -70,9 +80,29 @@ function endScreen(endResult) {
   restartBtn.textContent = "Play again"
   restartBtn.classList.add("restart-btn")
   restartBtn.addEventListener("click", () => {
-    location.reload() 
+    location.reload()
   })
 
   winScreen.appendChild(restartBtn)
   document.body.appendChild(winScreen)
+}
+
+function isShipSunk(isHit, x, y) {
+  if (isHit && computer.board[x][y].sunken) {
+    const sunkCoordinates = computer.shipsCoordinates.find((coords) =>
+      coords.some(([dx, dy]) => dx === x && dy === y),
+    )
+
+    if (sunkCoordinates) {
+      sunkCoordinates.forEach(([dx, dy]) => {
+        const sunkCell = board2.querySelector(`.cell-${dx}-${dy}`)
+        sunkCell.classList.add("sunk")
+      })
+    }
+  }
+}
+
+function enemyTurn() {
+  alert("test")
+  currTurn = "player"
 }
